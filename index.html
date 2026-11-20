@@ -22,16 +22,28 @@ const syncStyle=document.createElement("style");
 syncStyle.textContent=".ayah.qari-current{border:2px solid #d9b66d;background:#294d3f;box-shadow:0 0 14px #d9b66d55;}";
 document.head.append(syncStyle);
 
+
 function syncFatihaAyah(){
   if(!audio.src.includes("fatiha-qari-osama.mp.mp3"))return;
+
   const t=audio.currentTime;
-  const i=fatihaMarks.findIndex((v,j)=>j<7&&t>=v&&t<fatihaMarks[j+1]);
+  let i=-1;
+
+  for(let j=0;j<7;j++){
+    if(t>=fatihahMarks[j] && t<fatihahMarks[j+1]){
+      i=j;
+      break;
+    }
+  }
+
   document.querySelectorAll("#ayahs .ayah").forEach((el,j)=>{
     el.classList.toggle("qari-current",j===i);
   });
 }
 
 audio.addEventListener("timeupdate",syncFatihaAyah);
+audio.addEventListener("seeked",syncFatihaAyah);
+audio.addEventListener("play",syncFatihaAyah);
 
 openSura=async function(n){
   await oldOpenSura(n);
