@@ -13,4 +13,11 @@ $("search").oninput=e=>showList(e.target.value);$("back").onclick=()=>{$("reader
 async function fetchS(key,n){let r=await fetch(`https://quranenc.com/api/v1/translation/sura/${key}/${n}`);if(!r.ok)throw Error(key+" translation unavailable");let j=await r.json();return j.result||[]}
 async function openSura(n){$("home").style.display="none";$("reader").style.display="block";$("arname").textContent=S[n-1][1];$("soname").textContent=S[n-1][0];$("ayahs").innerHTML='<div class="loading">Aayadaha iyo tarjumaadaha waa la soo dejinayaa…</div>';try{let [so,en]=await Promise.all([fetchS("somali_yacob",n),fetchS("english_saheeh",n)]);let em=new Map(en.map(x=>[+x.aya,x.translation]));$("ayahs").innerHTML="";so.forEach(x=>{let d=document.createElement("article");d.className="ayah";let top=document.createElement("div");top.className="top";top.innerHTML=`<span>Aayadda ${x.aya}</span><button class="play">▶ Dhageyso</button>`;top.querySelector("button").onclick=()=>{$("now").textContent=`Suuradda ${S[n-1][0]} • Aayadda ${x.aya}`;let sn=String(n).padStart(3,"0"),an=String(x.aya).padStart(3,"0");audio.src=`https://d.quranenc.com/data/audio/somali_yacob/${sn}${an}.mp3`;audio.play().catch(()=>{})};let ar=document.createElement("div");ar.className="arabictext";ar.textContent=x.arabic_text||"";let soD=document.createElement("div");soD.className="translation";soD.innerHTML="<b>SOOMAALI</b>";soD.append(document.createTextNode(x.translation||""));let enD=document.createElement("div");enD.className="translation";enD.innerHTML="<b>ENGLISH</b>";enD.append(document.createTextNode(em.get(+x.aya)||""));d.append(top,ar,soD,enD);$("ayahs").append(d)})}catch(e){$("ayahs").innerHTML='<div class="loading">Tarjumaadaha lama soo dejin karin. Hubi internetka oo mar kale isku day.</div>'}}
 showList();if("serviceWorker"in navigator&&location.protocol.startsWith("http"))navigator.serviceWorker.register("sw.js").catch(()=>{});
-</script></body></html>
+const oldOpenSura=openSura;
+openSura=async function(n){
+await oldOpenSura(n);
+if(n===1){
+audio.src="fatiha-qari-osama.mp.mp3";audio.play();
+$("now").textContent="Qari Osama • Suuratul-Faatixah";
+}
+};</script></body></html>
