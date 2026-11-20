@@ -60,10 +60,17 @@ openSura=async function(n){
 
   if(n===1){
     lastAyah=-1;
+    audio.pause();
     audio.src="fatiha-qari-osama.mp.mp3";
     audio.currentTime=0;
     audio.load();
+
     $("now").textContent="Qari Osama • Suuratul-Faatixah";
+
+    audio.play().catch(error=>{
+      console.log("Audio error:",error);
+    });
+
   }else{
     audio.pause();
   }
