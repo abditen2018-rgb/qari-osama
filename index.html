@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="so">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#102c25">
+<title>Qari Osama</title>
+<link rel="manifest" href="manifest.json">
+<style>
+:root{--bg:#081914;--panel:#102c25;--panel2:#173a30;--gold:#d9b66d;--text:#f7f3e9;--muted:#b8c8be}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#1c4638 0,#081914 48%);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,sans-serif;min-height:100vh}
+header{padding:28px 20px 22px;text-align:center;border-bottom:1px solid #ffffff18}
+.logo{width:66px;height:66px;border:1px solid #d9b66d88;border-radius:22px;margin:0 auto 12px;display:grid;place-items:center;color:var(--gold);font-size:32px;background:#ffffff08}
+h1{font-family:Georgia,serif;font-size:30px;margin:0;color:var(--gold);letter-spacing:.4px}
+.sub{color:var(--muted);font-size:13px;margin-top:7px}
+main{max-width:760px;margin:auto;padding:20px 16px 150px}
+.section-title{display:flex;justify-content:space-between;align-items:center;margin:20px 2px 12px}
+h2{font-size:17px;margin:0}.count{font-size:12px;color:var(--muted)}
+.search{width:100%;border:1px solid #ffffff20;border-radius:14px;background:#ffffff0c;padding:14px 15px;color:white;font-size:15px;outline:none}
+.search::placeholder{color:#aabbb1}
+.surah-list{display:grid;gap:9px;margin-top:13px}
+.surah{width:100%;display:flex;align-items:center;gap:13px;text-align:left;padding:13px;border:1px solid #ffffff14;border-radius:15px;background:linear-gradient(110deg,#15392f,#10281f);color:var(--text);cursor:pointer}
+.surah:active{transform:scale(.99)}.num{width:36px;height:36px;display:grid;place-items:center;border-radius:12px;background:#d9b66d18;color:var(--gold);font-weight:700;font-size:13px}
+.info{flex:1}.name{font-weight:650}.meta{font-size:12px;color:var(--muted);margin-top:3px}.arabic{font-family:serif;font-size:21px;color:var(--gold)}
+.upload{margin-top:20px;border:1px dashed #d9b66d88;background:#d9b66d0b;border-radius:16px;padding:16px}
+.upload p{margin:6px 0 12px;color:var(--muted);font-size:13px;line-height:1.5}
+input[type=file]{width:100%;color:var(--muted);font-size:12px}
+.player{position:fixed;bottom:0;left:0;right:0;background:#0d241eF2;backdrop-filter:blur(16px);border-top:1px solid #ffffff20;padding:14px max(16px,calc((100vw - 720px)/2));}
+.now{font-size:13px;color:var(--gold);margin-bottom:8px}.controls{display:flex;align-items:center;gap:12px}
+audio{width:100%;height:38px;filter:sepia(.25) saturate(.7)}
+.note{color:var(--muted);font-size:11px;margin-top:7px;line-height:1.4}
+.empty{padding:20px;text-align:center;color:var(--muted);font-size:13px}
+</style>
+</head>
+<body>
+<header>
+ <div class="logo">۞</div>
+ <h1>Qari Osama</h1>
+ <div class="sub">Qur’aanka Kariimka ah • Dhageysi iyo xasuusin</div>
+</header>
+<main>
+ <div class="section-title"><h2>Suuradaha</h2><span class="count" id="count">114 suuradood</span></div>
+ <input class="search" id="search" placeholder="Raadi suurad..." aria-label="Raadi suurad">
+ <div class="surah-list" id="list"></div>
+ <section class="upload">
+  <h2>Ku dar codadka Qaari Osama</h2>
+  <p>Dooro faylasha MP3 ee telefoonkaaga si aad ugu tijaabiso ciyaaryahanka. Noocan bilowga ah faylasha waxay ku jiraan qalabkaaga oo keliya.</p>
+  <input id="files" type="file" accept="audio/*" multiple>
+  <div class="note">Si codadka ay dadka oo dhan uga wada dhageystaan, app-ka waxaa loo baahan yahay in lagu xiro kaydinta internetka (hosting/storage).</div>
+ </section>
+</main>
+<div class="player">
+ <div class="now" id="now">Dooro suurad ama cod si aad u bilowdo</div>
+ <div class="controls"><audio id="audio" controls preload="none"></audio></div>
+ <div class="note">Qari Osama • Dhageyso Qur’aanka meel kasta</div>
+</div>
+<script>
+const names = [
+["Al-Faatixa","الفاتحة",7],["Al-Baqara","البقرة",286],["Aal-Cimraan","آل عمران",200],["An-Nisaa","النساء",176],["Al-Maa'ida","المائدة",120],["Al-Ancaam","الأنعام",165],["Al-Acraaf","الأعراف",206],["Al-Anfaal","الأنفال",75],["At-Tawba","التوبة",129],["Yuunus","يونس",109],["Huud","هود",123],["Yuusuf","يوسف",111],["Ar-Racdi","الرعد",43],["Ibraahiim","إبراهيم",52],["Al-Xijr","الحجر",99],["An-Naxli","النحل",128],["Al-Israa","الإسراء",111],["Al-Kahf","الكهف",110],["Maryam","مريم",98],["Daahaa","طه",135],["Al-Anbiyaa","الأنبياء",112],["Al-Xajj","الحج",78],["Al-Mu'minuun","المؤمنون",118],["An-Nuur","النور",64],["Al-Furqaan","الفرقان",77],["Ash-Shucaraa","الشعراء",227],["An-Naml","النمل",93],["Al-Qasas","القصص",88],["Al-Cankabuut","العنكبوت",69],["Ar-Ruum","الروم",60],["Luqmaan","لقمان",34],["As-Sajda","السجدة",30],["Al-Axzaab","الأحزاب",73],["Saba","سبأ",54],["Faatir","فاطر",45],["Yaa-Siin","يس",83],["As-Saaffaat","الصافات",182],["Saad","ص",88],["Az-Zumar","الزمر",75],["Ghaafir","غافر",85],["Fussilat","فصلت",54],["Ash-Shuuraa","الشورى",53],["Az-Zukhruf","الزخرف",89],["Ad-Dukhaan","الدخان",59],["Al-Jaathiya","الجاثية",37],["Al-Axqaaf","الأحقاف",35],["Muxammad","محمد",38],["Al-Fatx","الفتح",29],["Al-Xujuraat","الحجرات",18],["Qaaf","ق",45],["Adh-Dhaariyaat","الذاريات",60],["At-Tuur","الطور",49],["An-Najm","النجم",62],["Al-Qamar","القمر",55],["Ar-Raxmaan","الرحمن",78],["Al-Waaqica","الواقعة",96],["Al-Xadiid","الحديد",29],["Al-Mujaadila","المجادلة",22],["Al-Xashr","الحشر",24],["Al-Mumt taxina","الممتحنة",13],["As-Saff","الصف",14],["Al-Jumuca","الجمعة",11],["Al-Munaafiquun","المنافقون",11],["At-Taghaabun","التغابن",18],["At-Talaaq","الطلاق",12],["At-Taxriim","التحريم",12],["Al-Mulk","الملك",30],["Al-Qalam","القلم",52],["Al-Xaaqqa","الحاقة",52],["Al-Macaarij","المعارج",44],["Nuux","نوح",28],["Al-Jinn","الجن",28],["Al-Muzzammil","المزمل",20],["Al-Muddaththir","المدثر",56],["Al-Qiyaama","القيامة",40],["Al-Insaan","الإنسان",31],["Al-Mursalaat","المرسلات",50],["An-Naba","النبأ",40],["An-Naazicaat","النازعات",46],["C Abasa","عبس",42],["At-Takwiir","التكوير",29],["Al-Infitaar","الإنفطار",19],["Al-Mutaffifiin","المطففين",36],["Al-Inshiqaaq","الإنشقاق",25],["Al-Buruuj","البروج",22],["At-Taariq","الطارق",17],["Al-Aclaa","الأعلى",19],["Al-Ghaashiya","الغاشية",26],["Al-Fajr","الفجر",30],["Al-Balad","البلد",20],["Ash-Shams","الشمس",15],["Al-Layl","الليل",21],["Ad-Duxaa","الضحى",11],["Ash-Sharx","الشرح",8],["At-Tiin","التين",8],["Al-Calaq","العلق",19],["Al-Qadr","القدر",5],["Al-Bayyina","البينة",8],["Az-Zalzala","الزلزلة",8],["Al-Caadiyaat","العاديات",11],["Al-Qaari'a","القارعة",11],["At-Takaathur","التكاثر",8],["Al-Casr","العصر",3],["Al-Humaza","الهمزة",9],["Al-Fiil","الفيل",5],["Quraysh","قريش",4],["Al-Maacuun","الماعون",7],["Al-Kawthar","الكوثر",3],["Al-Kaafiruuna","الكافرون",6],["An-Nasr","النصر",3],["Al-Masad","المسد",5],["Al-Ikhlaas","الإخلاص",4],["Al-Falaq","الفلق",5],["An-Naas","الناس",6]
+];
+const list=document.getElementById('list'), audio=document.getElementById('audio'), now=document.getElementById('now');
+function render(q=''){list.innerHTML='';let shown=names.map((s,i)=>({...{s,i}})).filter(x=>x.s[0].toLowerCase().includes(q.toLowerCase())||x.s[1].includes(q));document.getElementById('count').textContent=shown.length+' suuradood';shown.forEach(({s,i})=>{let b=document.createElement('button');b.className='surah';b.innerHTML=`<span class="num">${i+1}</span><span class="info"><span class="name">${s[0]}</span><span class="meta">${s[2]} aayadood</span></span><span class="arabic">${s[1]}</span>`;b.onclick=()=>{now.textContent='Suuradda '+s[0]+' — codka Qaari Osama';document.getElementById('files').click()};list.appendChild(b)});}
+document.getElementById('search').addEventListener('input',e=>render(e.target.value));
+document.getElementById('files').addEventListener('change',e=>{let f=e.target.files[0];if(!f)return;audio.src=URL.createObjectURL(f);now.textContent=f.name;audio.play().catch(()=>{});});
+render();
+if('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script>
+</body></html>
