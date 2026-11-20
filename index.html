@@ -16,12 +16,15 @@ showList();if("serviceWorker"in navigator&&location.protocol.startsWith("http"))
 
 const oldOpenSura=openSura;
 
-const fatihahMarks=[2.8,7.7,10.7,14.0,19.3,24.2,28.5,33.5];
+const fatihahMarks=[0,2.8,7.7,10.7,14.0,19.3,24.2];
 
 const syncStyle=document.createElement("style");
 syncStyle.textContent=".ayah.qari-current{border:2px solid #d9b66d;background:#294d3f;box-shadow:0 0 14px #d9b66d55;}";
 document.head.append(syncStyle);
 
+
+
+let lastAyah=-1;
 
 function syncFatihaAyah(){
   if(!audio.src.includes("fatiha-qari-osama.mp.mp3"))return;
@@ -30,30 +33,22 @@ function syncFatihaAyah(){
   let i=-1;
 
   for(let j=0;j<7;j++){
-    if(t>=fatihahMarks[j] && t<fatihahMarks[j+1]){
+    if(t>=fatihahMarks[j] &&
+       (j===6 || t<fatihahMarks[j+1])){
       i=j;
       break;
     }
   }
 
+  if(i===lastAyah)return;
+  lastAyah=i;
+
   document.querySelectorAll("#ayahs .ayah").forEach((el,j)=>{
     el.classList.toggle("qari-current",j===i);
+    if(j===i){
+      el.scrollIntoView({behavior:"smooth",block:"center"});
+    }
   });
 }
 
-audio.addEventListener("timeupdate",syncFatihaAyah);
-audio.addEventListener("seeked",syncFatihaAyah);
-audio.addEventListener("play",syncFatihaAyah);
-
-openSura=async function(n){
-  await oldOpenSura(n);
-  if(n===1){
-    audio.src="fatiha-qari-osama.mp.mp3";
-    audio.currentTime=0;
-    audio.play().catch(()=>{});
-    $("now").textContent="Qari Osama • Suuratul-Faatixah";
-  }else{
-    audio.pause();
-  }
-};
 </script></body></html>
